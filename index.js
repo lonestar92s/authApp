@@ -6,7 +6,10 @@ const session = require('express-session')
 let app = express()
 const bodyParser = require('body-parser')
 const User = require('./Auth/model')
-const passport = require('passport')
+//Passport
+const passport = require('passport'),
+LocalStrategy = require('passport-local').Strategy;
+
 const passportLocal = require('passport-local')
 const passportLocalMongoose = require('passport-local-mongoose');
 
@@ -31,6 +34,18 @@ app.use(session({
 	saveUninitialized: true,
 	resave: true
 }))
+
+//passport
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      if (!user.verifyPassword(password)) { return done(null, false); }
+      return done(null, user);
+    });
+  }
+));
 
 //show users
 app.get('/', (request, response)=>{
@@ -58,10 +73,11 @@ app.post('/', (request, response)=>{
 	})
 })
 
-app.post('/login', (req, res)=> {
-	let {username, password} = req.body;
+app.post('/login', passport.authenticate('local'), (request, response)=> {
+	response.redirect('/')
+	let {username, password} = request.body;
 	console.log(username)
-	res.send({username, password})
+	
 })
 	
 	
