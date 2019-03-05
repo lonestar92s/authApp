@@ -5,7 +5,7 @@ const morgan = require('morgan')
 const session = require('express-session')
 let app = express()
 const bodyParser = require('body-parser')
-const Users = require('./Auth/model')
+const User = require('./Auth/model')
 
 mongoose.connect('mongodb://localhost:27017/authApp', { useNewUrlParser: true })
 let database = mongoose.connection
@@ -31,12 +31,25 @@ app.use(session({
 
 //show users
 app.get('/', (request, response)=>{
-	  Users.find()
+	  User.find()
 	  .then(result=> {
 	  	response.send(result)
 	  })
 });
 //insert user
+app.post('/', (request, response)=>{
+	let newUser = new User({
+		username: 'test_user',
+		password: 'password'
+	})
+	newUser.save()
+	.then(user=>{
+		console.log('user created')
+	})
+	.catch(error=>{
+		console.log('error creating user', error.name, error)
+	})
+})
 
 
 app.listen(9000, ()=>{
