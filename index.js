@@ -32,24 +32,36 @@ app.use(session({
 //show users
 app.get('/', (request, response)=>{
 	  User.find()
-	  .then(result=> {
+	  .then(result => {
+	  	console.log('all users')
 	  	response.send(result)
 	  })
 });
 //insert user
 app.post('/', (request, response)=>{
 	let newUser = new User({
-		username: 'test_user',
+		username: 'test_user3',
 		password: 'password'
 	})
+	
 	newUser.save()
-	.then(user=>{
-		console.log('user created')
+	.then(user =>{
+		console.log('user created', user)
+		response.send(user)
 	})
-	.catch(error=>{
+	.catch(error =>{
 		console.log('error creating user', error.name, error)
+		response.send(error)
 	})
 })
+
+app.post('/login', (req, res)=> {
+	let {username, password} = req.body;
+	console.log(username)
+	res.send({username, password})
+})
+	
+	
 
 
 app.listen(9000, ()=>{
