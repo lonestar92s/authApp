@@ -2,9 +2,10 @@ let express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const morgan = require('morgan')
+const session = require('express-session')
 let app = express()
 const bodyParser = require('body-parser')
-const Users = require('./model')
+const Users = require('./Auth/model')
 
 mongoose.connect('mongodb://localhost:27017/authApp', { useNewUrlParser: true })
 let database = mongoose.connection
@@ -21,6 +22,12 @@ database.on('open', () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('combined'))
+app.use(session({
+	secret: 'keyboard dog',
+	cookie: {maxAge: 60000},
+	saveUninitialized: true,
+	resave: true
+}))
 
 //show users
 app.get('/', (request, response)=>{
@@ -29,7 +36,7 @@ app.get('/', (request, response)=>{
 	  	response.send(result)
 	  })
 });
-
+//insert user
 
 
 app.listen(9000, ()=>{
