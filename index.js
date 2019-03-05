@@ -6,6 +6,9 @@ const session = require('express-session')
 let app = express()
 const bodyParser = require('body-parser')
 const User = require('./Auth/model')
+const passport = require('passport')
+const passportLocal = require('passport-local')
+const passportLocalMongoose = require('passport-local-mongoose');
 
 mongoose.connect('mongodb://localhost:27017/authApp', { useNewUrlParser: true })
 let database = mongoose.connection
